@@ -12,10 +12,10 @@ const ports = {
   mqtt: 9000,
   http: 8080,
 }
-const _config = {"ts":0,"roulette_type":2,"skin":4,"openTime":{"ts":1704413599693,"left":0,"limit":300}}
-const _status = {"table_state":0,"last_numbers":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29],"statistics":[7,7,7,7,7,7,6,6,6,6,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5],"ts":0,"betConfig":{"max":10000,"min":500,"chip":50,"b36":250,"b18":500,"b12":750,"b9":1000,"b6":1500,"b7":0,"bCha1":2000,"bCha2":2500}}
 
 
+var _config = {"ts":0,"roulette_type":2,"skin":4,"openTime":{"ts":1704413599693,"left":0,"limit":300}}
+var _status = {"table_state":0,"last_numbers":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29],"statistics":[7,7,7,7,7,7,6,6,6,6,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5],"ts":0,"betConfig":{"max":10000,"min":500,"chip":50,"b36":250,"b18":500,"b12":750,"b9":1000,"b6":1500,"b7":0,"bCha1":2000,"bCha2":2500}}
 var clients = {}
 var server_id = ''
 
@@ -59,27 +59,26 @@ http.get('/', (req, res) => {
   res.render('index', {
     title: "Simulador de ruleta MQTT",
     clients: clients,
+    skin: _config.skin,
   })
 })
 
 
 http.get('/raffle', (req, res) => {
-  var status = _status
-  status.table_state = 1
-  mqtt_publish('sts/s/' + server_id + '/status', status)
+  _status.table_state = 1
+  mqtt_publish('sts/s/' + server_id + '/status', _status)
 
   setTimeout(() => {
-    status.table_state = 0
-    mqtt_publish('sts/s/' + server_id + '/status', status)
+    _status.table_state = 0
+    mqtt_publish('sts/s/' + server_id + '/status', _status)
     res.redirect('/')
   }, 1000)
 })
 
 
 http.get('/skin', (req, res) => {
-  var config = _config
-  config.skin = parseInt(req.query.s)
-  mqtt_publish('sts/s/' + server_id + '/config', config)
+  _config.skin = parseInt(req.query.s)
+  mqtt_publish('sts/s/' + server_id + '/config', _config)
   res.redirect('/')
 })
 
