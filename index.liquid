@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{title}}</title>
+</head>
+<body>
+  {% if clients.size > 0 %}
+    <b>Current Clients</b>
+    <br />
+    {% for client in clients %}
+      <p>{{ client[0] }}</p>
+      <br />
+    {% endfor %}
+  {% else %}
+    No clients connected
+  {% endif %}
+  <br />
+  Skin <select name="skin" onchange="window.location = './skin?s=' + this.options[this.selectedIndex].value">
+    <option value="0">Por Defecto</option>
+    <option value="1">Gris</option>
+    <option value="2">Neon</option>
+    <option value="3">Chino</option>
+    <option value="4">Carreras</option>
+  </select>
+  <br />
+  <input type="button" value="Sortear" onclick="window.location = './raffle'" />
+</body>
+</html>
