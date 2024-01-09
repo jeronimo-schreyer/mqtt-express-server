@@ -16,10 +16,17 @@
     No clients connected
   {% endif %}
   <br />
-  Skin <select name="skin" onchange="window.location = './skin?s=' + this.options[this.selectedIndex].value">
+  Skin <select onchange="window.location = './skin?s=' + this.options[this.selectedIndex].value">
   {% assign skins = "Por Defecto,Gris,Neon,Chino,Carreras" | split: ',' %}
-  {% for s in (0..skins.size) limit: skins.size %}
+  {% for s in (0..skins.size) %}
     <option value="{{ s }}"{% if skin == s %} selected{% endif %}>{{ skins[s] }}</option>
+  {% endfor %}
+  </select>
+  <br />
+  Ganador <select onchange="window.location = './winner?w=' + this.options[this.selectedIndex].value">
+  <option value="00"{% if winner == 37 %} selected{% endif %}>00</option>
+  {% for s in (0..36) %}
+    <option value="{{ s }}"{% if winner == s %} selected{% endif %}>{{ s }}</option>
   {% endfor %}
   </select>
   <br />

@@ -60,6 +60,7 @@ http.get('/', (req, res) => {
     title: "Simulador de ruleta MQTT",
     clients: clients,
     skin: _config.skin,
+    winner: _status.last_numbers[0]
   })
 })
 
@@ -79,6 +80,13 @@ http.get('/raffle', (req, res) => {
 http.get('/skin', (req, res) => {
   _config.skin = parseInt(req.query.s)
   mqtt_publish('sts/s/' + server_id + '/config', _config)
+  res.redirect('/')
+})
+
+
+http.get('/winner', (req, res) => {
+  _status.last_numbers[0] = (req.query.w == "00") ? 37 : parseInt(req.query.w)
+  mqtt_publish('sts/s/' + server_id + '/status', _status)
   res.redirect('/')
 })
 
