@@ -18,7 +18,7 @@
   <br />
   Skin <select onchange="window.location = './skin?s=' + this.options[this.selectedIndex].value">
   {% assign skins = "Por Defecto,Gris,Neon,Chino,Carreras" | split: ',' %}
-  {% for s in (0..skins.size) %}
+  {% for s in (0..99) limit: skins.size %}
     <option value="{{ s }}"{% if skin == s %} selected{% endif %}>{{ skins[s] }}</option>
   {% endfor %}
   </select>

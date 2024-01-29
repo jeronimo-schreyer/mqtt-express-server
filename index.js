@@ -14,8 +14,8 @@ const ports = {
 }
 
 
-var _config = {"ts":0,"roulette_type":2,"skin":4,"openTime":{"ts":1704413599693,"left":0,"limit":300}}
-var _status = {"table_state":0,"last_numbers":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29],"statistics":[7,7,7,7,7,7,6,6,6,6,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5],"ts":0,"betConfig":{"max":10000,"min":500,"chip":50,"b36":250,"b18":500,"b12":750,"b9":1000,"b6":1500,"b7":0,"bCha1":2000,"bCha2":2500}}
+var _config = {"ts":0,"roulette_type":0,"skin":4,"openTime":{"ts":1704413599693,"left":0,"limit":300}}
+var _status = {"table_state":0,"last_numbers":[],"statistics":[],"ts":0,"betConfig":{"max":10000,"min":500,"chip":50,"b36":250,"b18":500,"b12":750,"b9":1000,"b6":1500,"b7":0,"bCha1":2000,"bCha2":2500}}
 var clients = {}
 var server_id = ''
 
@@ -47,7 +47,14 @@ http.listen(ports.http, () => {
 mqtt.listen(ports.mqtt, () => {
   console.log('MQTT broker running on port:', ports.mqtt)
 
-  // Start publishing
+  // Add some random data
+  _status.statistics = Array(38).fill(0)
+  for (let i = 0; i < 300; i++) {
+    const winner = Math.floor(Math.random() * 38)
+    _status.last_numbers = [].concat(winner, _status.last_numbers).slice(0, 30)
+    _status.statistics[winner] += 1
+  }
+
   mqtt_publish('sts/s/' + server_id + '/config', _config)
   mqtt_publish('sts/s/' + server_id + '/status', _status)
 })
@@ -67,26 +74,34 @@ http.get('/', (req, res) => {
 
 http.get('/raffle', (req, res) => {
   _status.table_state = 1
+  _status.ts = Date.now()
   mqtt_publish('sts/s/' + server_id + '/status', _status)
 
   setTimeout(() => {
+    _status.ts = Date.now()
     _status.table_state = 0
+
     mqtt_publish('sts/s/' + server_id + '/status', _status)
-    res.redirect('/')
   }, 1000)
+
+  res.redirect('/')
 })
 
 
 http.get('/skin', (req, res) => {
   _config.skin = parseInt(req.query.s)
+  _config.ts = Date.now()
   mqtt_publish('sts/s/' + server_id + '/config', _config)
+
   res.redirect('/')
 })
 
 
 http.get('/winner', (req, res) => {
   _status.last_numbers[0] = (req.query.w == "00") ? 37 : parseInt(req.query.w)
+  _status.ts = Date.now()
   mqtt_publish('sts/s/' + server_id + '/status', _status)
+
   res.redirect('/')
 })
 
